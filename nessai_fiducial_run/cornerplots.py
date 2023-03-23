@@ -1,15 +1,19 @@
+# Make corner plot from results in results_file_name, plotting only parameters in columns_to_plot (for ordering see all_labels)
+#
+
 import bilby
 import json
 import corner
 import numpy as np
 import matplotlib.pyplot as plt
 
+results_file_name = "results_fiducial_nessai_zero-noise.json"
 
 all_labels = ['$\\mathcal{M}$', '$q$', '$a_1$', '$a_2$', '$\\theta_1$', '$\\theta_2$', '$\\Delta\\phi$', '$\\phi_{JL}$', '$\\mathrm{DEC}$', '$\\mathrm{RA}$', '$\\theta_{JN}$', '$\\psi$', '$\\Lambda_1$', '$\\Lambda_2$', '$t_c$']
 # luminosity_distance= 100.0 not in labels for some reason. Also note discrepancy between phi_12 in truths and delta_phi in labels
 all_truths = [1.486, 0.9, 0.04, 0.01, 1.0264673717225983, 2.1701305583885513, 5.0962562029664955, 2.518241237045709, 0.2205292600865073, 3.952677097361719, 0.25, 2.6973435044499543, 1500, 750, -0.01]
 
-columns_to_plot = np.arange(0,15)#[0,1,2,7,12]
+columns_to_plot = [0,1,2,7,12]
 truths = []
 labels = []
 for i in range(len(all_truths)):
@@ -26,7 +30,7 @@ kwargs = dict(
             plot_density=False, plot_datapoints=True, fill_contours=True,
             max_n_ticks=3, hist_kwargs=dict(density=True))
 
-with open("results_fiducial_nessai_zero-noise.json") as f:
+with open(results_file_name) as f:
 	results = json.load(f)
 print(results.keys())
 print(results['parameter_labels'])
@@ -43,4 +47,4 @@ figure = corner.corner(samples, labels = labels, **kwargs)
 
 
 
-figure.savefig("nessai_corner_zero-noise_all")
+figure.savefig("nessai_corner_zero-noise")
