@@ -1,6 +1,7 @@
-# Calculate and plot posterior on H0 from a single bright run.
-# We know the redshift of EM counterpart to infinite precision.
-# Take the luminosity distance posterior from this run and do H0 = c * z / d_L to find posterior on H0.
+# Calculate and plot likelihoods over H0 from a set of bright runs.
+# We know the redshift of the EM counterpart to infinite precision.
+# Take the luminosity distance posterior from this run and do H0 = c * z / d_L to find likelihood on H0.
+# Also plot the combined likelihood (= product of individual likelihoods)
 #
 
 import json
