@@ -29,7 +29,7 @@ def tidal_to_mass(tidal, coeffs):
 
 
 # Folder containing JSON samples files (append / to this)
-results_folder = 'results/'
+results_folder = '3G/results/'
 # JSON samples files to include
 samples_files = listdir(results_folder)
 posterior_samples_all = {}
@@ -53,9 +53,10 @@ for samples_file in samples_files:
         mass_2_source = [tidal_to_mass(tidal, EOS_fit_coeffs[EOS]) for tidal in lambda_2]
         redshift_2 = mass_2_detector / mass_2_source - 1
         H0_2 = redshift_2 * c / luminosity_distance
-        # add both H0 to the dictionary of samples
-        H0_samples_all[samples_file + '_1'] = H0_1
-        H0_samples_all[samples_file + '_2'] = H0_2
+        # since the H0 likelihoods from mass_1 and mass_2 are not independent (came from the same sampling process), we must take the average before combining with other runs
+        H0_both = (H0_1 + H0_2) / 2
+        # add H0_both to the dictionary of samples
+        H0_samples_all[samples_file] = H0_both
 
 H0_min = -1000
 H0_max = 1000
@@ -63,24 +64,23 @@ H0_step = 10
 H0_n = int((H0_max - H0_min) / H0_step)
 
 '''
-# plot a random sample of the individual H0 posteriors
+# plot all of the individual H0 posteriors
 for run in H0_samples_all:
-	if random.randint(0,9) == 9:
-		H0_samples = H0_samples_all[run]
-		H0_samples_clipped = []
-		n_below = 0
-		n_above = 0
-		for H0 in H0_samples:
-			if H0 < H0_min:
-				n_below += 1
-			elif H0 > H0_max:
-				n_above += 1
-			else:
-				H0_samples_clipped.append(H0)
-		print(len(H0_samples), n_below, n_above)
-		figure = plt.figure(run)
-		plt.title(run)
-		plt.hist(x=H0_samples_clipped, bins=100)
+	H0_samples = H0_samples_all[run]
+	H0_samples_clipped = []
+	n_below = 0
+	n_above = 0
+	for H0 in H0_samples:
+		if H0 < H0_min:
+			n_below += 1
+		elif H0 > H0_max:
+			n_above += 1
+		else:
+			H0_samples_clipped.append(H0)
+	print(len(H0_samples), n_below, n_above)
+	figure = plt.figure(run)
+	plt.title(run)
+	plt.hist(x=H0_samples_clipped, bins=100)
 '''
 
 full_posterior_H0 = np.zeros(H0_n)
