@@ -13,14 +13,12 @@ from os import listdir
 
 def get_quantile(pdf, quantile, bin_edges, step):
 	cumsum = 0
-	print(sum(pdf))
 	if (len(pdf) != len(bin_edges)-1):
 		print('error finding quantile')
 		return False
 	for i in range(len(bin_edges)-1):
 		if cumsum*step >= quantile:
 			return bin_edges[i+1]
-			print(cumsum)
 		cumsum += pdf[i]
 		
 	return False
@@ -94,5 +92,5 @@ plt.axvline(x=quantile_lower, color='black', ls='--')
 plt.axvline(x=quantile_upper, color='black', ls='--')
 
 plt.stairs(H0_likelihood_combined, bin_edges)
-plt.savefig('H0_likelihood_bright_2.5G_all-labels-etc', dpi=500)
+plt.savefig('H0_likelihood_bright_25G_all-labels-etc', dpi=500)
 plt.show()
