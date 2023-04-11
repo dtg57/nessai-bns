@@ -11,6 +11,21 @@ import numpy as np
 import bilby
 from os import listdir
 
+def get_quantile(pdf, quantile, bin_edges, step):
+	cumsum = 0
+	print(sum(pdf))
+	if (len(pdf) != len(bin_edges)-1):
+		print('error finding quantile')
+		return False
+	for i in range(len(bin_edges)-1):
+		if cumsum*step >= quantile:
+			return bin_edges[i+1]
+			print(cumsum)
+		cumsum += pdf[i]
+		
+	return False
+		
+
 # speed of light in km/s
 c = 299792
 # injected redshift for each run
@@ -18,11 +33,11 @@ z_injected = {}
 
 H0_min = 30
 H0_max = 100
-H0_step = 0.5
+H0_step = 0.1
 H0_n = int((H0_max - H0_min) / H0_step)
 
 # folder where runs are stored, append / to this
-samples_folder = 'results/'
+samples_folder = '2.5G/results/'
 samples_files = listdir(samples_folder)
 posterior_samples = {}
 
@@ -56,12 +71,28 @@ for samples_file in posterior_samples:
     ax.set_ylim([0, max(H0_likelihood * 1.1)])
     plt.stairs(H0_likelihood, bin_edges)
 
+
+# normalise
+H0_likelihood_combined = H0_likelihood_combined / (H0_step * sum(H0_likelihood_combined))
 print(z_injected)
 print(H0_likelihood_combined)
 figure = plt.figure('all')
 ax = figure.add_axes([0.15, 0.1, 0.8, 0.8])
 plt.title('H0 posterior from 1 bright run: combined')
+plt.xlabel('$H_0$ / $km s^{-1} Mpc^{-1}$')
+plt.ylabel('Probability density')
 ax.set_ylim([0, max(H0_likelihood_combined * 1.1)])
-plt.stairs(H0_likelihood_combined, bin_edges)
+ax.set_xlim([55,75])
+# plot Bilby's true value of H0 (Planck 2015)
+plt.axvline(x=67.74, color='orange')
+# calculate and plot the median and 1 sigma quantiles
+median = get_quantile(H0_likelihood_combined, 0.5, bin_edges, H0_step)
+quantile_lower = get_quantile(H0_likelihood_combined, 0.159, bin_edges, H0_step)
+quantile_upper = get_quantile(H0_likelihood_combined, 0.841, bin_edges, H0_step)
+plt.axvline(x=median, color='black')
+plt.axvline(x=quantile_lower, color='black', ls='--')
+plt.axvline(x=quantile_upper, color='black', ls='--')
 
+plt.stairs(H0_likelihood_combined, bin_edges)
+plt.savefig('H0_likelihood_bright_2.5G_all-labels-etc', dpi=500)
 plt.show()
