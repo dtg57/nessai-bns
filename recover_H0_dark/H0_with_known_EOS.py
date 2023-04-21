@@ -140,6 +140,17 @@ for run in H0_samples_all:
 
 print('runs used:', n_used)
 
+# now reweight likelihood by dividing by the implicit prior on H0
+# in the region of interest this prior is approximated as linear, p(H0) = m_prior * H0 + c_prior (not normalised)
+m_prior = 1.777
+c_prior = 594.738
+full_posterior_H0_reweighted = []
+for i in range(len(bin_edges) - 1):
+    H0 = (bin_edges[i+1] - bin_edges[i]) / 2
+    full_posterior_H0_reweighted.append(full_posterior_H0[i] / (m_prior * H0 + c_prior))
+
+full_posterior_H0 = full_posterior_H0_reweighted
+
 # normalise
 print(full_posterior_H0)
 full_posterior_H0 = full_posterior_H0 / (sum(full_posterior_H0) * (H0_step))
