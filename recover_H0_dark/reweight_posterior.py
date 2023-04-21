@@ -1,3 +1,6 @@
+# Plots the implicit prior on H0 from imposing priors on d_L, masses, lambdas etc. From this we can calculate the reweighting factor needed to divide the likelihood over H0 by to correct it.
+#
+
 import bilby
 import matplotlib.pyplot as ppl
 import numpy as np
@@ -29,7 +32,7 @@ c = 299792
 m_min = 1.2
 m_max = 2.3
 # how many samples to take from these priors before binning 
-n_samples = 10**6
+n_samples = 10**7
 # store H0 samples here
 H0_samples = []
 
@@ -55,5 +58,5 @@ for i in range(n_samples):
 		H0_sample = c*z_sample/dl_sample
 		H0_samples.append(H0_sample)
 
-ppl.hist(x = H0_samples, bins = 10000, range = (-1000,10000))
+ppl.hist(x = H0_samples, bins = 20000, range = (-1000,10000))
 ppl.show()
